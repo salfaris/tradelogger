@@ -12,8 +12,11 @@ from tradelogger.forms import RegistrationForm, LoginForm, NewLogForm
 from tradelogger.helpers import myr
 
 def ai_says(pl_vals, total_trades):
+    if not pl_vals:
+        return "It seems that you have not trade anything yet."
+    
     on_profit = ["Buy Low Sell High :)",
-                 f"Seems like you are profiting. Remember not to overtrade {current_user.username}.",
+                 f"Seems like you are profiting recently. Remember not to overtrade {current_user.username}.",
                  "Have a trading plan.",
                  "Set your EP, TP and CL before making a trade!",
                  ]
@@ -24,17 +27,17 @@ def ai_says(pl_vals, total_trades):
                "Set your EP, TP and CL before making a trade!",
                "Try a different trading strategy, buy on dip, buy on rebound?"
                ]
-
+    
     if pl_vals[-1] < 0 and total_trades % 100 == 0:
-        ai_says = random.choice([f"Wow, you've reached {total_trades} trades already."] + on_loss)
+        ai_says_text = random.choice([f"Wow, you've reached {total_trades} trades already."] + on_loss)
     if pl_vals[-1] > 0 and total_trades % 100 == 0:
-        ai_says = random.choice([f"Wow, you've reached {total_trades} trades already."] + on_profit)
+        ai_says_text = random.choice([f"Wow, you've reached {total_trades} trades already."] + on_profit)
     elif pl_vals[-1] < 0:
-        ai_says = random.choice(on_loss)
+        ai_says_text = random.choice(on_loss)
     elif pl_vals[-1] > 0:
-        ai_says = random.choice(on_profit)
+        ai_says_text = random.choice(on_profit)
 
-    return ai_says
+    return ai_says_text
 
 
 # Routes for web app
