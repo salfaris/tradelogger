@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Homepage
+{% endblock %}
+
+{% block main %}
+    <div class="content-section" style="padding: 20px 15px;">
+        <div class="row">
+            <span class="col-sm-10">
+        {% for page_num in logs.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+            {% if page_num %}
+                {% if logs.page == page_num %}
+                    <a class="btn btn-primary mb-4" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+                {% else %}
+                    <a class="btn btn-outline-primary mb-4" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+            {% else %}
+                ...
+            {% endif %}
+        {% endfor %}
+            </span>
+            <span class="col-sm-2 text-center">
+                <a class="btn btn-primary mb-4" href="{{ url_for('new_log')}}">New Log</a>
+            </span>
+        </div>
+        <table class="table table-striped">
+            <thead class="text-center">
+                <tr>
+                    <th>Entry Date</th>
+                    <th>Stock Name</th>
+                    <th>Buy</th>
+                    <th>Sell</th>
+                    <th>Qty (x100)</th>
+                    <th>Profit/Loss</th>
+                    <th>Sell Type</th>
+                    <th>Sudo</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for log in logs.items %}
+                    <tr>
+                        <td>{{ log.created_at.strftime('%d/%m/%y') }}</td>
+                        <td><a href="{{ 'https://www.isaham.my/' + log.stock_name }}">{{ log.stock_name }}</a></td>
+                        <td>{{ log.buy_price / 100 }}</td>
+                        <td>{{ log.sell_price / 100 }}</td>
+                        <td>{{ log.quantity }}</td>
+                    {% if log.profit_loss > 0 %}
+                        <td class="list-group-item-success">{{ log.profit_loss / 100 }}</td>
+                    {% else %}
+                        <td class="list-group-item-danger">{{ log.profit_loss / 100 }}</td>
+                    {% endif %}
+                        <td>{{ log.sell_type }}</td>
+                        <td>
+                            <!-- <a href="{{ url_for('update_log', log_id=log.id) }}">Update</a> -->
+                            <form action="{{ url_for('delete_log', log_id=log.id) }}" method="POST">
+                                <input class="btn btn-danger btn-sm" type="submit" value="X">
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}         
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

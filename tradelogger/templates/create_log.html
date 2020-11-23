@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    New Log
+{% endblock %}
+
+{% block main %}
+    <div class="container p-5 text-center">
+        <form action="" method="POST">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-5">{{ legend }}</legend>
+                <div class="form-group">
+                    <!-- {{ form.stock_name.label(class="form-control-label") }} -->
+
+                    <!-- Check for errors (stock_name) -->
+                    {% if form.stock_name.errors %}
+                        {{ form.stock_name(class="form-control form-control-md is-invalid", placeholder="Stock Name") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.stock_name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}     
+                        </div>
+                    {% else %}
+                        {{ form.stock_name(class="form-control form-control-md", placeholder="Stock Name") }}
+                    {% endif %}   
+                </div>
+                <div class="form-group">
+                    <!-- {{ form.buy_price.label(class="form-control-label") }} -->
+                    
+                    <!-- Check for errors (buy_price) -->
+                    {% if form.buy_price.errors %}
+                    {{ form.buy_price(class="form-control form-control-md is-invalid", placeholder="Buy Price") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.buy_price.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}     
+                    </div>
+                    {% else %}
+                        {{ form.buy_price(class="form-control form-control-md", placeholder="Buy Price") }}
+                    {% endif %} 
+                </div>
+                <div class="form-group">
+                    <!-- {{ form.sell_price.label(class="form-control-label") }} -->
+                    
+                    <!-- Check for errors (sell_price) -->
+                    {% if form.sell_price.errors %}
+                    {{ form.sell_price(class="form-control form-control-md is-invalid", placeholder="Sell Price") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.sell_price.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}     
+                    </div>
+                    {% else %}
+                        {{ form.sell_price(class="form-control form-control-md", placeholder="Sell Price") }}
+                    {% endif %} 
+                </div>
+                <div class="form-group">
+                    <!-- {{ form.quantity.label(class="form-control-label") }} -->
+                    
+                    <!-- Check for errors (quantity) -->
+                    {% if form.quantity.errors %}
+                    {{ form.quantity(class="form-control form-control-md is-invalid", placeholder="Quantity (x100)") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.quantity.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}     
+                    </div>
+                    {% else %}
+                        {{ form.quantity(class="form-control form-control-md", placeholder="Quantity (x100)") }}
+                    {% endif %} 
+                </div>
+                <div class="form-group">
+                    <!-- {{ form.sell_type.label(class="form-control-label") }} -->
+                    
+                    <!-- Check for errors (sell_type) -->
+                    {% if form.sell_type.errors %}
+                    {{ form.sell_type(class="form-control form-control-md is-invalid", placeholder="Sell Type") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.sell_type.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}     
+                    </div>
+                    {% else %}
+                        {{ form.sell_type(class="form-control form-control-md", placeholder="Sell Type") }}
+                    {% endif %} 
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-primary") }}
+            </div>
+        </form>
+    </div>
+{% endblock %}

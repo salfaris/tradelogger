@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Homepage
+{% endblock %}
+
+{% block main %}
+    <div class="content-section" style="padding: 20px 15px;">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Entry Date</th>
+                    <th>Stock Name</th>
+                    <th>Buy</th>
+                    <th>Sell</th>
+                    <th>Qty (x100)</th>
+                    <th>Profit/Loss</th>
+                    <th>Sell Type</th>
+                    <th>Sudo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ log.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ log.stock_name }}</td>
+                    <td>{{ log.buy_price / 100 }}</td>
+                    <td>{{ log.sell_price / 100 }}</td>
+                    <td>{{ log.quantity }}</td>
+                    <td class="list-group-item-success">{{ log.profit_loss / 100 }}</td>
+                    <td>{{ log.sell_type }}</td>
+                </tr>    
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

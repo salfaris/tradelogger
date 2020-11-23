@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <div class="container p-5 text-center">
+        <form action="/login" method="POST">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="mb-5">Welcome Back!</legend>
+                <div class="form-group">
+                    <!-- {{ form.username.label(class="form-control-label") }} -->
+                    <!-- Check for errors (username) -->
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control form-control-md is-invalid", placeholder="Username") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control form-control-md", placeholder="Username") }}
+                    {% endif %}   
+
+                </div>
+                <div class="form-group">
+                    <!-- {{ form.password.label(class="form-control-label") }} -->
+                    <!-- Check for errors (password) -->
+                    {% if form.password.errors %}
+                    {{ form.password(class="form-control form-control-md is-invalid", placeholder="Password") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.password.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}     
+                    </div>
+                    {% else %}
+                        {{ form.password(class="form-control form-control-md", placeholder="Password") }}
+                    {% endif %} 
+                </div>
+            </fieldset>
+            <div class="form-check mb-3">
+                {{ form.remember(class="form-check-input") }}
+                {{ form.remember.label(class="form-check-label") }}
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+            <small class="text-muted ml-2">
+                <a href="#">Forgot your password?</a>
+            </small>
+        </form>
+    </div>
+    <div class="border-top text-center pt-3">
+        <small class="text-muted">
+            Need An Account? <a class="ml-1" href="{{ url_for('register') }}">Sign Up Now</a>
+        </small>
+    </div>
+{% endblock %}
