@@ -55,15 +55,24 @@
         {% if current_user.is_authenticated %}
             <div class="col-md-3">
                 <div class="content-section" style="padding: 20px 15px;">
-                    <h4>Overview</h4>
-                    <p class='text-muted'>AI says: {{ ai_says }}
+                    <h4 style="text-align: center;">Overview</h4>
+                    <p class='text-muted' style="text-align: center;">AI says: {{ ai_says }}
                     <ul class="list-group">
+                        {% if net_profit > 0 %}
+                            <li class="list-group-item list-group-item-success">Net profit: RM {{ net_profit }}</li>
+                        {% else %}
+                            <li class="list-group-item list-group-item-danger">Net profit: RM {{ net_profit }}</li>
+                        {% endif %}
                         <li class="list-group-item list-group-item-light">Total trades: {{ total_trades }}</li>
-                    {% if net_profit > 0 %}
-                        <li class="list-group-item list-group-item-success">Net profit: RM {{ net_profit }}</li>
-                    {% else %}
-                        <li class="list-group-item list-group-item-danger">Net profit: RM {{ net_profit }}</li>
-                    {% endif %}
+                    </ul>
+                    </p>
+                </div>
+                <div class="content-section" style="padding: 20px 15px;">
+                    <h4 style="text-align: center;">ML Predictions</h4>
+                    <p style="text-align: center;">We think this is how you will perform.</p>
+                    <ul class="list-group">
+                        <li class="list-group-item list-group-item-light">Next <b>trade's</b> profit: RM 10</li>
+                        <li class="list-group-item list-group-item-light">Next <b>month's</b> profit: RM 350</li>
                     </ul>
                     </p>
                 </div>
