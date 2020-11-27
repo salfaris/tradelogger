@@ -10,6 +10,7 @@ from tradelogger import app, db, bcrypt
 from tradelogger.models import Users, Trades
 from tradelogger.forms import RegistrationForm, LoginForm, NewLogForm
 from tradelogger.helpers import myr
+from tradelogger.ml_models import ml_pipeline
 
 def ai_says(pl_vals, total_trades):
     if not pl_vals:
@@ -47,9 +48,15 @@ def ai_says(pl_vals, total_trades):
 def index():
     page = request.args.get('page', 1, type=int)
     logs = Trades.query.filter_by(user_id=current_user.get_id()) \
-                       .order_by(Trades.created_at.desc()) \
-                       .paginate(per_page=10, page=page)
-
+                       .order_by(Trades.created_at.desc())
+    
+    # # Get recent logs from user
+    # _query_recent_logs = 5
+    # logs_recent = logs.limit(_query_recent_logs).all()
+    
+    # Get paginated logs from user
+    logs_paginated = logs.paginate(per_page=10, page=page)
+    
     # Total trades by user
     total_trades = Trades.query.filter_by(user_id=current_user.get_id()).count()
 
@@ -59,16 +66,25 @@ def index():
     
     pl_query = Trades.query.filter_by(user_id=current_user.get_id())\
                            .with_entities(Trades.profit_loss)
+                            
     for pl in pl_query:
         net_profit += pl[0]
-        pl_vals.append(pl[0])
-        
-    net_profit = round(net_profit / 100, 2)
-
-    # Some AI
+        pl_vals.append(float(pl[0]))
+    
+    net_profit = round(net_profit/100., 2)
+    
+    # ML Predictions
+    last_pred = ml_pipeline(pl_vals)
+    
+    # AI Says
     says = ai_says(pl_vals, total_trades)
 
-    return render_template("index.html", logs=logs, total_trades=total_trades, net_profit=net_profit, ai_says=says)
+    return render_template("index.html",
+                           logs=logs_paginated,
+                           total_trades=total_trades,
+                           net_profit=net_profit,
+                           ai_says=says,
+                           next_trade_pred=last_pred)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -213,7 +229,20 @@ def new_log():
 @login_required
 def log(log_id):
     log = Trades.query.get_or_404(log_id)
-    return render_template("log.html", log=log)
+    
+    # Compute net profit of current users
+    net_profit = 0
+    pl_vals = []
+    
+    pl_query = Trades.query.filter_by(user_id=current_user.get_id())\
+                           .with_entities(Trades.profit_loss)
+    for pl in pl_query:
+        net_profit += pl[0]
+        pl_vals.append(pl[0])
+        
+    net_profit = round(net_profit / 100, 2)
+    
+    return render_template("log.html", log=log, net_profit=net_profit)
 
 @app.route("/logs/<int:log_id>/update", methods=['GET', 'POST'])
 @login_required
@@ -240,6 +269,9 @@ def update_log(log_id):
         form.quantity.data = log.quantity
         form.sell_type.data = log.sell_type
 
+    # Total trades by user
+    total_trades = Trades.query.filter_by(user_id=current_user.get_id()).count()
+    
     # Compute net profit of current users
     net_profit = 0
     pl_vals = []

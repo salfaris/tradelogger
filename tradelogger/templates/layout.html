@@ -69,9 +69,13 @@
                 </div>
                 <div class="content-section" style="padding: 20px 15px;">
                     <h4 style="text-align: center;">ML Predictions</h4>
-                    <p style="text-align: center;">We think this is how you will perform.</p>
+                    <p class="text-muted" style="text-align: center;">We think this is how you will perform.</p>
                     <ul class="list-group">
-                        <li class="list-group-item list-group-item-light">Next <b>trade's</b> profit: RM 10</li>
+                        {% if next_trade_pred > 0 %}
+                            <li class="list-group-item list-group-item-success">Next <b>trade's</b> profit: RM {{ next_trade_pred }}</li>
+                        {% else %}
+                            <li class="list-group-item list-group-item-danger">Next <b>trade's</b> profit: RM {{ next_trade_pred }}</li>
+                        {% endif %}
                         <li class="list-group-item list-group-item-light">Next <b>month's</b> profit: RM 350</li>
                     </ul>
                     </p>
