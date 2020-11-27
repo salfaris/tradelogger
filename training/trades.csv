@@ -1,0 +1,10 @@
+id,created_at,stock_name,buy_price,sell_price,quantity,profit_loss,sell_type,user_id
+8,2020-08-23 15:23:13.672596,DRACO,123,234,20,222000,Saje-saje,2
+9,2020-09-16 11:05:29.815960,JHM,141,132,28,-25200,Double reversal hammer (volume + non-volume),1
+10,2020-09-21 11:05:57.407695,PENTA,476,478,10,2000,"Strong fundamentals, forming ascending triangle.",1
+11,2020-09-28 11:06:31.278712,SERNKOU,87,89,35,7000,BTST style,1
+12,2020-10-07 11:07:00.356908,UWC,269,319,12,60000,"First Heikin Ashi green candle, strong reversal",1
+13,2020-10-10 11:07:34.696692,DSONIC,129,148,26,49400,Towards Giant Rounding Bottom Re-entry point!,1
+14,2020-10-10 11:08:06.437996,PWROOT,236,225,15,-16500,Towards Giant Rounding Bottom,1
+15,2020-11-19 11:08:59.723200,SUPERMX,190,228.0,16,60799,Swing trade gloves,1
+16,2020-11-23 11:09:29.229819,NOTION,131,95,23,-82800,"Cutloss, was aiming for pennant.",1
