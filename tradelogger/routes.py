@@ -214,23 +214,40 @@ def new_log():
     # Total trades by user
     total_trades = Trades.query.filter_by(user_id=current_user.get_id()).count()
     
+    trade_date_vals = []
+    
     # Compute net profit of current users
     net_profit = 0
     pl_vals = []
     
     pl_query = Trades.query.filter_by(user_id=current_user.get_id())\
-                           .with_entities(Trades.profit_loss)
-    for pl in pl_query:
-        net_profit += pl[0]
-        pl_vals.append(pl[0])
+                           .with_entities(Trades.created_at, Trades.profit_loss)
+                            
+    for query in pl_query:
+        pl = query[1]
+        net_profit += pl
+        pl_vals.append(float(pl))
+        trade_date_vals.append(query[0])
+    
+    # df = pd.DataFrame(dict(dates=trade_date_vals, profit_loss=pl_vals))
         
-    net_profit = round(net_profit / 100, 2)
+    net_profit = round(net_profit/100., 2)
+    
+    # Next trade ML prediction
+    trade_pred, monthly_pred = ml_prediction_sidebar_pipeline(trade_date_vals, pl_vals)
 
     # Some AI
     says = ai_says(pl_vals, total_trades)
 
-    return render_template("create_log.html", title="New Log", 
-                           form=form, legend="New Log", total_trades=total_trades, net_profit=net_profit, ai_says=says)
+    return render_template("create_log.html",
+                           title="New Log",
+                           form=form,
+                           legend="New Log",
+                           total_trades=total_trades,
+                           net_profit=net_profit,
+                           ai_says=says,
+                           next_trade_pred=trade_pred,
+                           next_monthly_pred=monthly_pred)
 
 @app.route("/logs/<int:log_id>")
 @login_required
