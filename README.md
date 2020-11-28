@@ -1,5 +1,5 @@
 # tradelogger
-TradeLogger, shiny ML-powered trade logging web app. 
+TradeLogger, shiny ML-powered web app to log stock trades. 
 
 ### Tech powered by:
 - Back-end: Flask
