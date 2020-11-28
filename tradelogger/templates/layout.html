@@ -63,6 +63,11 @@
                         {% else %}
                             <li class="list-group-item list-group-item-danger">Net profit: RM {{ net_profit }}</li>
                         {% endif %}
+                        {% if monthly_profit > 0 %}
+                            <li class="list-group-item list-group-item-success">Monthly ({{ current_date.strftime("%B") }}) profit: RM {{ monthly_profit }}</li>
+                        {% else %}
+                            <li class="list-group-item list-group-item-danger">Monthly ({{ current_date.strftime("%B") }}) profit: RM {{ monthly_profit }}</li>
+                        {% endif %}
                         <li class="list-group-item list-group-item-light">Total trades: {{ total_trades }}</li>
                     </ul>
                     </p>

@@ -1,5 +1,6 @@
 # Local imports
 import random
+import datetime
 
 # Third-party imports
 from flask import render_template, redirect, url_for, flash, request, abort
@@ -9,7 +10,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from tradelogger import app, db, bcrypt
 from tradelogger.models import Users, Trades
 from tradelogger.forms import RegistrationForm, LoginForm, NewLogForm
-from tradelogger.helpers import myr
+from tradelogger.helpers import myr, round_pl
 from tradelogger.ml_models import ml_prediction_sidebar_pipeline
 
 def ai_says(pl_vals, total_trades):
@@ -61,23 +62,28 @@ def index():
     total_trades = Trades.query.filter_by(user_id=current_user.get_id()).count()
 
     trade_date_vals = []
-    
-    # Compute net profit of current users
-    net_profit = 0
     pl_vals = []
     
     pl_query = Trades.query.filter_by(user_id=current_user.get_id())\
                            .with_entities(Trades.created_at, Trades.profit_loss)
-                            
-    for query in pl_query:
-        pl = query[1]
-        net_profit += pl
-        pl_vals.append(float(pl))
-        trade_date_vals.append(query[0])
     
-    # df = pd.DataFrame(dict(dates=trade_date_vals, profit_loss=pl_vals))
+    current_month_trade_count = 0
+           
+    now = datetime.datetime.now()
+    curr_month = now.month
+    curr_year = now.year
         
-    net_profit = round(net_profit/100., 2)
+    for query in pl_query:
+        trade_date, pl = query
+        
+        if trade_date.month == curr_month and trade_date.year == curr_year:
+             current_month_trade_count += 1
+        
+        pl_vals.append(float(pl))
+        trade_date_vals.append(trade_date)
+    
+    net_profit = round_pl(sum(pl_vals))
+    monthly_profit = round_pl(sum(pl_vals[-current_month_trade_count:]))
     
     # Next trade ML prediction
     trade_pred, monthly_pred = ml_prediction_sidebar_pipeline(trade_date_vals, pl_vals)
@@ -89,6 +95,8 @@ def index():
                            logs=logs_paginated,
                            total_trades=total_trades,
                            net_profit=net_profit,
+                           monthly_profit=monthly_profit,
+                           current_date=now.date(),
                            ai_says=says,
                            next_trade_pred=trade_pred,
                            next_monthly_pred=monthly_pred)
