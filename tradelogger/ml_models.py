@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.neighbors import KNeighborsRegressor
+from xgboost import XGBRegressor
 
 BASE_FEATURE_NAME = 'profit_loss'
 
@@ -52,13 +53,14 @@ def get_pct_pred(df: pd.DataFrame):
     
     df[target_name] = df.profit_loss.pct_change()
 
+    # Cleans data due to rolling and pct change.
     df = df.dropna()
     
     features = df[feature_names]
     targets = df[target_name].values
     
+    # Scale data
     sc = MinMaxScaler()
-
     features = sc.fit_transform(features)
     
     preds = models(features, targets)
@@ -68,17 +70,25 @@ def get_pct_pred(df: pd.DataFrame):
     return last_pct_pred
 
 def models(features, targets):
+    _seed = 144323
     rfr = RandomForestRegressor(n_estimators=200,
                             max_depth=5,
                             max_features=2,
                             min_samples_split=4,
                             oob_score=True,
-                            random_state=44)
+                            random_state=_seed)
+
+    xgbr = XGBRegressor(objective='reg:squarederror',
+                    learning_rate=0.1,
+                    colsample_bytree=0.1,
+                    n_estimators=100,
+                    max_depth=3,
+                    random_state=_seed)
 
     # knn = KNeighborsRegressor(n_neighbors=7)
     
-    models = [rfr]
-    
+    # Apply ensembling technique
+    models = [rfr, xgbr]
     preds = []
     
     for model in models:
