@@ -76,7 +76,11 @@
                         {% else %}
                             <li class="list-group-item list-group-item-danger">Next <b>trade's</b> profit: RM {{ next_trade_pred }}</li>
                         {% endif %}
-                        <li class="list-group-item list-group-item-light">Next <b>month's</b> profit: RM 350</li>
+                        {% if next_monthly_pred > 0 %}
+                            <li class="list-group-item list-group-item-success">Next <b>month's</b> profit: RM {{ next_monthly_pred }}</li>
+                        {% else %}
+                            <li class="list-group-item list-group-item-danger">Next <b>month's</b> profit: RM {{ next_monthly_pred }}</li>
+                        {% endif %}
                     </ul>
                     </p>
                 </div>

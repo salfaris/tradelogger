@@ -10,7 +10,7 @@ from tradelogger import app, db, bcrypt
 from tradelogger.models import Users, Trades
 from tradelogger.forms import RegistrationForm, LoginForm, NewLogForm
 from tradelogger.helpers import myr
-from tradelogger.ml_models import ml_pipeline
+from tradelogger.ml_models import ml_prediction_sidebar_pipeline
 
 def ai_says(pl_vals, total_trades):
     if not pl_vals:
@@ -60,21 +60,27 @@ def index():
     # Total trades by user
     total_trades = Trades.query.filter_by(user_id=current_user.get_id()).count()
 
+    trade_date_vals = []
+    
     # Compute net profit of current users
     net_profit = 0
     pl_vals = []
     
     pl_query = Trades.query.filter_by(user_id=current_user.get_id())\
-                           .with_entities(Trades.profit_loss)
+                           .with_entities(Trades.created_at, Trades.profit_loss)
                             
-    for pl in pl_query:
-        net_profit += pl[0]
-        pl_vals.append(float(pl[0]))
+    for query in pl_query:
+        pl = query[1]
+        net_profit += pl
+        pl_vals.append(float(pl))
+        trade_date_vals.append(query[0])
     
+    # df = pd.DataFrame(dict(dates=trade_date_vals, profit_loss=pl_vals))
+        
     net_profit = round(net_profit/100., 2)
     
-    # ML Predictions
-    last_pred = ml_pipeline(pl_vals)
+    # Next trade ML prediction
+    trade_pred, monthly_pred = ml_prediction_sidebar_pipeline(trade_date_vals, pl_vals)
     
     # AI Says
     says = ai_says(pl_vals, total_trades)
@@ -84,7 +90,8 @@ def index():
                            total_trades=total_trades,
                            net_profit=net_profit,
                            ai_says=says,
-                           next_trade_pred=last_pred)
+                           next_trade_pred=trade_pred,
+                           next_monthly_pred=monthly_pred)
 
 
 @app.route("/register", methods=['GET', 'POST'])
