@@ -1,4 +1,6 @@
 from typing import List
+import math
+
 import pandas as pd
 import numpy as np
 
@@ -44,9 +46,8 @@ def get_pct_pred(df: pd.DataFrame):
     feature_names = [BASE_FEATURE_NAME]
     target_name = 'pl_pct'
     
-    # Feature engineering: Consider just MA periods for now.
-    ma_periods = [2, 3]
-    for i in ma_periods:
+    # Feature engineering: Consider just MA periods for now.    
+    for i in get_ma_periods(len(df)):
         ma_name = 'ma_' + str(i)
         feature_names.append(ma_name)
         df[ma_name] = df.profit_loss.rolling(i).mean()
@@ -68,6 +69,17 @@ def get_pct_pred(df: pd.DataFrame):
     last_pct_pred = preds.ravel()[-1]
     
     return last_pct_pred
+
+def get_ma_periods(length: int):
+    ma_weights = [1/20, 1/10, 1/5]
+
+    ma_periods = [math.ceil(weight * length) for weight in ma_weights]
+    ma_periods = list(set(ma_periods))
+    
+    if ma_periods == [1]:
+        ma_periods = [1, 2]
+        
+    return ma_periods
 
 def models(features, targets):
     _seed = 144323
