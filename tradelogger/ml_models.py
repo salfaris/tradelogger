@@ -19,7 +19,6 @@ def ml_prediction_sidebar_pipeline(date_ls: List, profit_loss_ls: List):
     conv_to_val = lambda pct, current_val: pct * current_val/100.
     
     trade_val_pred = conv_to_val(trade_pct_pred, profit_loss_ls[-1])
-    
     monthly_val_pred = conv_to_val(monthly_pct_pred, month_df.profit_loss[-1])
     
     rounded_trade_pred = round(trade_val_pred, 2)
@@ -45,7 +44,7 @@ def get_pct_pred(df: pd.DataFrame):
     target_name = 'pl_pct'
     
     # Feature engineering: Consider just MA periods for now.
-    ma_periods = [2]
+    ma_periods = [2, 3]
     for i in ma_periods:
         ma_name = 'ma_' + str(i)
         feature_names.append(ma_name)
